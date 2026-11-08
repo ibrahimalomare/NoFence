@@ -1,0 +1,69 @@
+name: NoFence Android CI & APK Build
+
+on:
+  push:
+    branches: [ "main", "master", "develop" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-test:
+    name: Run Unit Tests & Assemble Debug APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Accept Android SDK Licenses
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
+
+      - name: Setup Gradle 8.9
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Detect Project Root & Run Unit Tests
+        run: |
+          if [ -f "settings.gradle.kts" ]; then
+            PROJECT_DIR="."
+          elif [ -f "NoFence/settings.gradle.kts" ]; then
+            PROJECT_DIR="NoFence"
+          else
+            echo "ERROR: Could not find settings.gradle.kts in repository root or NoFence/ directory."
+            ls -la
+            exit 1
+          fi
+          echo "Building NoFence in directory: $PROJECT_DIR"
+          cd "$PROJECT_DIR"
+          gradle testDebugUnitTest --stacktrace
+
+      - name: Assemble Debug APK
+        run: |
+          if [ -f "settings.gradle.kts" ]; then
+            cd "."
+          else
+            cd "NoFence"
+          fi
+          gradle assembleDebug --stacktrace
+
+      - name: Upload NoFence Debug APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NoFence-debug-apk
+          path: |
+            app/build/outputs/apk/debug/*.apk
+            NoFence/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 30
