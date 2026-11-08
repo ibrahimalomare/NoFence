@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+  "name": "NoFence Proxy & Fail-Closed Routing Enforcer",
+  "version": "1.0.0",
+  "description": "Enforces Tor SOCKS5, Custom Proxy (SOCKS5/HTTP/HTTPS), remote DNS resolution, and Fail-Closed blocking inside Mozilla GeckoView.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "proxy-enforcer@nofence.com",
+      "strict_min_version": "91.0"
+    }
+  },
+  "permissions": [
+    "proxy",
+    "webRequest",
+    "webRequestBlocking",
+    "<all_urls>",
+    "geckoViewAddons",
+    "nativeMessaging"
+  ],
+  "background": {
+    "scripts": ["background.js"]
+  }
+}

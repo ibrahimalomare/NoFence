@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">NoFence</string>
+    <string name="tagline">Censorship-Resistant GeckoView Browser</string>
+    <string name="tor_disclaimer">NoFence Tor Mode routes GeckoView traffic and DNS over Tor SOCKS5 and hardens WebRTC/IPv6 preferences, but it is NOT identical to the official Tor Browser and does not provide complete browser-level anti-fingerprinting anonymity against state-level traffic correlation.</string>
+</resources>
